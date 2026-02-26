@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XBot — أقوى بوت ديسكورد عربي</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #06060f;
+  --bg2: #0d0d1f;
+  --card: #10102a;
+  --card2: #181835;
+  --border: rgba(120,80,255,0.15);
+  --purple: #7b50ff;
+  --purple2: #a07bff;
+  --purple3: #c4a8ff;
+  --glow: rgba(123,80,255,0.35);
+  --text: #f0eeff;
+  --muted: #8888aa;
+  --green: #4ade80;
+  --gold: #fbbf24;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Cairo', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* NOISE OVERLAY */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.4;
+}
+
+/* BG GLOW */
+.bg-glow {
+  position: fixed;
+  width: 700px; height: 700px;
+  background: radial-gradient(circle, rgba(123,80,255,0.12) 0%, transparent 70%);
+  top: -200px; left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* NAV */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(6,6,15,0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 40px;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 64px;
+}
+
+.nav-logo {
+  font-size: 1.5rem; font-weight: 900;
+  display: flex; align-items: center; gap: 10px;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.nav-logo .logo-icon {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, var(--purple), var(--purple2));
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem;
+  box-shadow: 0 0 20px var(--glow);
+}
+
+.nav-logo span { color: var(--purple2); }
+
+.nav-links { display: flex; gap: 6px; }
+
+.nav-links a {
+  color: var(--muted);
+  text-decoration: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all .2s;
+  cursor: pointer;
+}
+
+.nav-links a:hover, .nav-links a.active {
+  color: var(--text);
+  background: rgba(123,80,255,0.12);
+}
+
+/* PAGES */
+.page { display: none; position: relative; z-index: 1; }
+.page.active { display: block; }
+
+/* ═══════════════ HOME ═══════════════ */
+.hero {
+  text-align: center;
+  padding: 90px 20px 70px;
+}
+
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(123,80,255,0.1);
+  border: 1px solid rgba(123,80,255,0.3);
+  color: var(--purple3);
+  padding: 7px 20px;
+  border-radius: 50px;
+  font-size: 0.82rem; font-weight: 700;
+  letter-spacing: .5px;
+  margin-bottom: 28px;
+  animation: fadeUp .6s ease both;
+}
+
+.hero h1 {
+  font-size: clamp(2.4rem, 6vw, 4.2rem);
+  font-weight: 900;
+  line-height: 1.15;
+  margin-bottom: 20px;
+  animation: fadeUp .6s .1s ease both;
+}
+
+.hero h1 .glow-text {
+  background: linear-gradient(135deg, var(--purple2), var(--purple3));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 30px rgba(160,123,255,0.4));
+}
+
+.hero p {
+  font-size: 1.1rem;
+  color: var(--muted);
+  max-width: 560px;
+  margin: 0 auto 40px;
+  line-height: 1.8;
+  animation: fadeUp .6s .2s ease both;
+}
+
+.hero-btns {
+  display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;
+  animation: fadeUp .6s .3s ease both;
+}
+
+.btn {
+  padding: 13px 28px;
+  border-radius: 12px;
+  font-size: 0.95rem; font-weight: 700;
+  text-decoration: none; border: none; cursor: pointer;
+  transition: all .25s;
+  font-family: 'Cairo', sans-serif;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--purple), var(--purple2));
+  color: #fff;
+  box-shadow: 0 4px 24px rgba(123,80,255,0.4);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(123,80,255,0.5);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--purple2);
+  border: 1.5px solid rgba(123,80,255,0.4);
+}
+
+.btn-outline:hover {
+  background: rgba(123,80,255,0.1);
+  border-color: var(--purple);
+}
+
+/* STATS */
+.stats-bar {
+  display: flex; justify-content: center; gap: 0;
+  max-width: 700px; margin: 60px auto;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.stat-item {
+  flex: 1; text-align: center;
+  padding: 24px 16px;
+  border-left: 1px solid var(--border);
+  transition: background .2s;
+}
+
+.stat-item:last-child { border-left: none; }
+.stat-item:hover { background: var(--card2); }
+
+.stat-num {
+  font-size: 1.8rem; font-weight: 900;
+  color: var(--purple2);
+  font-family: 'JetBrains Mono', monospace;
+  display: block;
+}
+
+.stat-label { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
+
+/* FEATURES */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  max-width: 1100px; margin: 0 auto;
+  padding: 0 20px;
+}
+
+.feature-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px;
+  transition: all .25s;
+  position: relative;
+  overflow: hidden;
+}
+
+.feature-card::before {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 120px; height: 120px;
+  background: radial-gradient(circle, rgba(123,80,255,0.1) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.feature-card:hover {
+  border-color: rgba(123,80,255,0.4);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+
+.feature-icon {
+  width: 48px; height: 48px;
+  background: linear-gradient(135deg, rgba(123,80,255,0.2), rgba(160,123,255,0.1));
+  border: 1px solid rgba(123,80,255,0.3);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.4rem;
+  margin-bottom: 16px;
+}
+
+.feature-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; }
+.feature-card p { color: var(--muted); font-size: 0.88rem; line-height: 1.7; }
+
+/* ═══════════════ ABOUT ═══════════════ */
+.about-hero {
+  max-width: 900px; margin: 0 auto;
+  padding: 70px 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px; align-items: center;
+}
+
+.about-text h2 {
+  font-size: 2.2rem; font-weight: 900;
+  margin-bottom: 16px; line-height: 1.3;
+}
+
+.about-text h2 span { color: var(--purple2); }
+.about-text p { color: var(--muted); line-height: 1.9; margin-bottom: 14px; font-size: 0.95rem; }
+
+.about-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 32px;
+}
+
+.about-card .bot-logo {
+  width: 70px; height: 70px;
+  background: linear-gradient(135deg, var(--purple), var(--purple2));
+  border-radius: 18px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2rem;
+  margin-bottom: 20px;
+  box-shadow: 0 0 40px var(--glow);
+}
+
+.about-card h3 { font-size: 1.4rem; font-weight: 900; margin-bottom: 8px; }
+.about-card p { color: var(--muted); font-size: 0.88rem; line-height: 1.7; }
+
+.tag-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+
+.tag {
+  padding: 5px 14px;
+  border-radius: 50px;
+  font-size: 0.78rem; font-weight: 700;
+  background: rgba(123,80,255,0.12);
+  border: 1px solid rgba(123,80,255,0.25);
+  color: var(--purple3);
+}
+
+/* ═══════════════ COMMANDS ═══════════════ */
+.commands-layout {
+  max-width: 1000px; margin: 0 auto;
+  padding: 50px 20px;
+}
+
+.cmd-tabs {
+  display: flex; gap: 8px; flex-wrap: wrap;
+  margin-bottom: 32px;
+}
+
+.cmd-tab {
+  padding: 9px 20px;
+  border-radius: 10px;
+  border: 1.5px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  font-family: 'Cairo', sans-serif;
+  font-size: 0.88rem; font-weight: 700;
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.cmd-tab:hover, .cmd-tab.active {
+  background: rgba(123,80,255,0.15);
+  border-color: var(--purple);
+  color: var(--purple2);
+}
+
+.cmd-section { display: none; }
+.cmd-section.active { display: block; }
+
+.cmd-group { margin-bottom: 32px; }
+
+.cmd-group-title {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--purple);
+  font-weight: 700;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.cmds-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 10px;
+}
+
+.cmd-item {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 16px;
+  transition: all .2s;
+}
+
+.cmd-item:hover {
+  border-color: rgba(123,80,255,0.35);
+  background: var(--card2);
+}
+
+.cmd-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--purple2);
+  font-weight: 700;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.cmd-desc { font-size: 0.8rem; color: var(--muted); }
+
+.cmd-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 5px;
+  font-size: 0.7rem; font-weight: 700;
+  margin-right: 6px;
+}
+
+.badge-free { background: rgba(74,222,128,0.12); color: var(--green); }
+.badge-premium { background: rgba(251,191,36,0.12); color: var(--gold); }
+
+/* ═══════════════ DASHBOARD ═══════════════ */
+.dashboard-layout {
+  max-width: 1100px; margin: 0 auto;
+  padding: 50px 20px;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 24px;
+}
+
+.dash-sidebar {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+  height: fit-content;
+  position: sticky; top: 80px;
+}
+
+.dash-sidebar h4 {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--muted);
+  margin-bottom: 12px;
+  padding: 0 8px;
+}
+
+.dash-menu-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all .2s;
+  font-size: 0.88rem; font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.dash-menu-item:hover, .dash-menu-item.active {
+  background: rgba(123,80,255,0.12);
+  color: var(--purple2);
+}
+
+.dash-content { display: flex; flex-direction: column; gap: 20px; }
+
+.dash-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px;
+}
+
+.dash-card h3 {
+  font-size: 1rem; font-weight: 700;
+  margin-bottom: 20px;
+  display: flex; align-items: center; gap: 10px;
+}
+
+.dash-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.dash-row:last-child { border-bottom: none; }
+
+.dash-row-label { font-size: 0.9rem; }
+.dash-row-label span { color: var(--muted); font-size: 0.8rem; display: block; margin-top: 2px; }
+
+.toggle {
+  width: 44px; height: 24px;
+  background: var(--card2);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  position: relative;
+  transition: background .2s;
+}
+
+.toggle.on { background: var(--purple); border-color: var(--purple); }
+
+.toggle::after {
+  content: '';
+  position: absolute;
+  width: 18px; height: 18px;
+  background: #fff;
+  border-radius: 50%;
+  top: 2px; right: 2px;
+  transition: transform .2s;
+}
+
+.toggle.on::after { transform: translateX(-20px); }
+
+.dash-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.dash-stat {
+  background: var(--card2);
+  border-radius: 12px;
+  padding: 18px;
+  border: 1px solid var(--border);
+  text-align: center;
+}
+
+.dash-stat .num {
+  font-size: 1.6rem; font-weight: 900;
+  color: var(--purple2);
+  font-family: 'JetBrains Mono', monospace;
+  display: block;
+}
+
+.dash-stat .lbl { font-size: 0.78rem; color: var(--muted); margin-top: 4px; }
+
+.coming-soon {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--muted);
+}
+
+.coming-soon .icon { font-size: 3rem; margin-bottom: 16px; }
+.coming-soon h3 { font-size: 1.4rem; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+
+/* SECTION HEADERS */
+.sec-header {
+  text-align: center;
+  padding: 60px 20px 40px;
+}
+
+.sec-header h2 { font-size: 2rem; font-weight: 900; margin-bottom: 8px; }
+.sec-header p { color: var(--muted); }
+
+/* FOOTER */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 36px 20px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.85rem;
+  position: relative; z-index: 1;
+}
+
+footer a { color: var(--purple2); text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+
+/* ANIMATIONS */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: rgba(123,80,255,0.4); border-radius: 3px; }
+
+@media (max-width: 768px) {
+  .about-hero { grid-template-columns: 1fr; gap: 30px; }
+  .dashboard-layout { grid-template-columns: 1fr; }
+  .dash-sidebar { position: static; }
+  nav { padding: 0 16px; }
+  .nav-links a { padding: 8px 10px; font-size: 0.82rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+
+<nav>
+  <a class="nav-logo" href="#">
+    <div class="logo-icon">⚡</div>
+    <span>X</span>Bot
+  </a>
+  <div class="nav-links">
+    <a onclick="showPage('home')" class="active" id="nav-home">🏠 الرئيسية</a>
+    <a onclick="showPage('about')" id="nav-about">🤖 عن البوت</a>
+    <a onclick="showPage('commands')" id="nav-commands">📋 الأوامر</a>
+    <a onclick="showPage('dashboard')" id="nav-dashboard">⚙️ لوحة التحكم</a>
+  </div>
+</nav>
+
+<!-- ═══ HOME ═══ -->
+<div id="page-home" class="page active">
+  <div class="hero">
+    <div class="hero-badge">🇵🇸 مجاني 100% · مفتوح المصدر · عربي أصيل</div>
+    <h1>أقوى بوت ديسكورد<br><span class="glow-text">عربي في الكون</span></h1>
+    <p>XBot يجمع كل ميزات ProBot، عراق بوت، MEE6، Carl-bot وأكثر — في بوت واحد مجاني بلا قيود ولا اشتراكات.</p>
+    <div class="hero-btns">
+      <a href="#" onclick="showPage('commands')" class="btn btn-primary">📋 استعرض الأوامر</a>
+      <a href="#" onclick="showPage('about')" class="btn btn-outline">🤖 عن البوت</a>
+    </div>
+  </div>
+
+  <div class="stats-bar" style="animation: fadeUp .6s .4s ease both; opacity:0; animation-fill-mode:both;">
+    <div class="stat-item">
+      <span class="stat-num">6+</span>
+      <div class="stat-label">بوتات مدمجة</div>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">150+</span>
+      <div class="stat-label">أمر متاح</div>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">100%</span>
+      <div class="stat-label">مجاني</div>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">∞</span>
+      <div class="stat-label">بدون حدود</div>
+    </div>
+  </div>
+
+  <div style="padding: 0 20px 80px;">
+    <div class="sec-header">
+      <h2>✨ لماذا XBot؟</h2>
+      <p>كل شي تحتاجه لسيرفرك في مكان واحد</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🛡️</div>
+        <h3>حماية متكاملة</h3>
+        <p>مكافحة ريد، فلتر سبام، فلتر روابط، وحماية تلقائية متقدمة تحمي سيرفرك على مدار الساعة.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎫</div>
+        <h3>نظام تذاكر احترافي</h3>
+        <p>تذاكر دعم بأزرار تفاعلية، نظام تقديم، سجل محادثات، وإدارة كاملة للطلبات.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⭐</div>
+        <h3>مستويات ومكافآت</h3>
+        <p>نظام XP متقدم، لوحة متصدرين، رتب مكافأة تلقائية، ومضاعف سرعة اكتساب النقاط.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎭</div>
+        <h3>رتب تفاعلية</h3>
+        <p>رتب بالأزرار والإيموجي، تريقرز ذكية، ردود تلقائية، وأتمتة شاملة للسيرفر.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎉</div>
+        <h3>مسابقات وقيف أواي</h3>
+        <p>مسابقات هدايا متقدمة، إعادة سحب، مسابقات موسيقية، وتذكيرات للسيرفر.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🇵🇸</div>
+        <h3>يدعم فلسطين</h3>
+        <p>XBot بُني بحب للأمة العربية ويدعم قضية فلسطين. من النهر إلى البحر، فلسطين ستتحرر.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ABOUT ═══ -->
+<div id="page-about" class="page">
+  <div class="about-hero">
+    <div class="about-text">
+      <h2>عن <span>XBot</span> 🤖</h2>
+      <p>XBot هو مشروع مفتوح المصدر يهدف إلى توفير بوت ديسكورد عربي شامل ومجاني 100% يجمع أفضل ميزات أشهر البوتات في مكان واحد.</p>
+      <p>بُني بـ Python مع مكتبة discord.py، ويدعم الأوامر السلاش الحديثة وواجهة ويب للتحكم الكامل بدون الحاجة لكتابة أي أوامر.</p>
+      <p>المشروع مفتوح المصدر ومتاح للجميع — لا اشتراكات، لا قيود، لا علامة مائية.</p>
+      <div class="tag-list">
+        <span class="tag">Python</span>
+        <span class="tag">discord.py</span>
+        <span class="tag">مفتوح المصدر</span>
+        <span class="tag">Slash Commands</span>
+        <span class="tag">عربي 100%</span>
+        <span class="tag">🇵🇸</span>
+      </div>
+    </div>
+    <div class="about-card">
+      <div class="bot-logo">⚡</div>
+      <h3>XBot v1.0</h3>
+      <p style="margin-top:8px;color:var(--muted);font-size:.88rem;line-height:1.7">بوت ديسكورد عربي شامل يجمع ميزات ProBot، عراق بوت، MEE6، Carl-bot، Dyno، وArcane في بوت واحد مجاني.</p>
+      <div style="margin-top:20px;display:flex;flex-direction:column;gap:10px;">
+        <div style="display:flex;justify-content:space-between;padding:10px;background:var(--bg2);border-radius:8px;font-size:.85rem;">
+          <span style="color:var(--muted)">المطور</span>
+          <span style="color:var(--purple2);font-weight:700">Majed19108</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:10px;background:var(--bg2);border-radius:8px;font-size:.85rem;">
+          <span style="color:var(--muted)">اللغة</span>
+          <span style="color:var(--purple2);font-weight:700">Python 3.11+</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:10px;background:var(--bg2);border-radius:8px;font-size:.85rem;">
+          <span style="color:var(--muted)">الترخيص</span>
+          <span style="color:var(--green);font-weight:700">MIT — مجاني</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:10px;background:var(--bg2);border-radius:8px;font-size:.85rem;">
+          <span style="color:var(--muted)">الإصدار</span>
+          <span style="color:var(--purple2);font-weight:700;font-family:monospace">v1.0.0</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ COMMANDS ═══ -->
+<div id="page-commands" class="page">
+  <div class="commands-layout">
+    <div class="sec-header" style="padding-top:20px;">
+      <h2>📋 الأوامر الكاملة</h2>
+      <p>جميع الأوامر مجانية بدون أي قيود</p>
+    </div>
+    <div class="cmd-tabs">
+      <button class="cmd-tab active" onclick="showCmds('probot')">🛡️ ProBot</button>
+      <button class="cmd-tab" onclick="showCmds('iraq')">🇮🇶 عراق بوت</button>
+      <button class="cmd-tab" onclick="showCmds('mee6')">⭐ MEE6</button>
+      <button class="cmd-tab" onclick="showCmds('carl')">🎭 Carl-bot</button>
+      <button class="cmd-tab" onclick="showCmds('dyno')">🔧 Dyno</button>
+      <button class="cmd-tab" onclick="showCmds('arcane')">🪄 Arcane</button>
+    </div>
+
+    <!-- ProBot -->
+    <div class="cmd-section active" id="cmds-probot">
+      <div class="cmd-group">
+        <div class="cmd-group-title">🔨 الإدارة</div>
+        <div class="cmds-grid">
+          <div class="cmd-item"><span class="cmd-name">/ban</span><div class="cmd-desc">حظر عضو من السيرفر</div></div>
+          <div class="cmd-item"><span class="cmd-name">/unban</span><div class="cmd-desc">رفع الحظر عن عضو</div></div>
+          <div class="cmd-item"><span class="cmd-name">/kick</span><div class="cmd-desc">طرد عضو</div></div>
+          <div class="cmd-item"><span class="cmd-name">/timeout</span><div class="cmd-desc">كتم عضو مؤقتاً</div></div>
+          <div class="cmd-item"><span class="cmd-name">/untimeout</span><div class="cmd-desc">رفع الكتم</div></div>
+          <div class="cmd-item"><span class="cmd-name">/warn</span><div class="cmd-desc">تحذير عضو</div></div>
+          <div class="cmd-item"><span class="cmd-name">/warnings</span><div class="cmd-desc">عرض التحذيرات</div></div>
+          <div class="cmd-item"><span class="cmd-name">/clear</span><div class="cmd-desc">مسح رسائل</div></div>
+          <div class="cmd-item"><span class="cmd-name">/slowmode</span><div class="cmd-desc">تفعيل السلو مود</div></div>
+          <div class="cmd-item"><span class="cmd-name">/lock</span><div class="cmd-desc">قفل القناة</div></div>
+          <div class="cmd-item"><span class="cmd-name">/unlock</span><div class="cmd-desc">فتح القناة</div></div>
+          <div class="cmd-item"><span class="cmd-name">/role-add</span><div class="cmd-desc">إضافة رتبة لعضو</div></div>
+          <div class="cmd-item"><span class="cmd-name">/role-remove</span><div class="cmd-desc">إزالة رتبة من عضو</div></div>
+        </div>
+      </div>
+      <div class="cmd-group">
+        <div class="cmd-group-title">📊 المستويات</div>
+        <div class="cmds-grid">
+          <div class="cmd-item"><span class="cmd-name">/rank</span><div class="cmd-desc">عرض رتبتك الحالية</div></div>
+          <div class="cmd-item"><span class="cmd-name">/leaderboard</span><div class="cmd-desc">لوحة المتصدرين</div></div>
+          <div class="cmd-item"><span class="cmd-name">/level</span><div class="cmd-desc">عرض مستواك</div></div>
+        </div>
+      </div>
+      <div class="cmd-group">
+        <div class="cmd-group-title">👤 المعلومات</div>
+        <div class="cmds-grid">
+          <div class="cmd-item"><span class="cmd-name">/avatar</span><div class="cmd-desc">صورة عضو</div></div>
+          <div class="cmd-item"><span class="cmd-name">/user</span><div class="cmd-desc">معلومات عضو</div></div>
+          <div class="cmd-item"><span class="cmd-name">/server</span><div class="cmd-desc">معلومات السيرفر</div></div>
+          <div class="cmd-item"><span class="cmd-name">/banner</span><div class="cmd-desc">بانر عضو</div></div>
+          <div class="cmd-item"><span class="cmd-name">/botinfo</span><div class="cmd-desc">معلومات البوت</div></div>
+        </div>
+      </div>
+      <div class="cmd-group">
+        <div class="cmd-group-title">🎉 القيف أواي</div>
+        <div class="cmds-grid">
+          <div class="cmd-item"><span class="cmd-name">/giveaway-create</span><div class="cmd-desc">إنشاء قيف أواي</div></div>
+          <div class="cmd-item"><span class="cmd-name">/giveaway-end</span><div class="cmd-desc">إنهاء قيف أواي</div></div>
+          <div class="cmd-item"><span class="cmd-name">/giveaway-reroll</span><div class="cmd-desc">إعادة السحب</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- عراق بوت -->
+    <div class="cmd-section" id="cmds-iraq">
+      <div class="cmd-group">
+        <div class="cmd-group-title">🎫 نظام التذاكر</div>
+        <div class="cmds-grid">
+          <div class="cmd-item"><span class="cmd-name">/ticket-panel</span><div class="cmd-desc">إنشاء بانل التذاكر</div></div>
+          <div class="cmd-item"><span class="cmd-name">/ticket-open</span><div class="cmd-desc">فتح تذكرة يدوياً</div></div>
+          <div class="cmd-item"><span class="cmd-name">/ticket-close</span><div class="cmd-desc">إغلاق التذكرة</div></div>
+          <div class="cmd-item"><span class="cmd-name">/ticket-add</span><div class="cmd-desc">إضافة عضو للتذكرة</div></div>
+          <div class="cmd-item"><span class="cmd-name">/ticket-remove</span><div class="cmd-desc">إزالة عضو من التذكرة</div></div>
+          <div class="cmd-item"><span class="cmd-name">/ticket-rename</span><div class="cmd-desc">تغيير اسم التذكرة</div></div>
+          <div class="cmd-item"><span class="cmd-name">/ticket-delete</span><div class="cmd-desc">حذف التذكرة</div></div>
+          <div class="cmd-item"><span class="cmd-name">/ticket-info</span><div class="cmd-desc">معلومات التذكرة</div></div>
+          <div class="cmd-item"><span class="cmd-name">/ticket-reopen</span><div class="cmd-desc">إعادة فتح تذكرة</div></div>
+          <div class="cmd-item"><span class="cmd-name">/ticket-transfer</span><div class="cmd-desc">نقل التذكرة</div></div>
+        </div>
+      </div>
+      <div class="cmd-group">
+        <div class="cmd-group-title">📋 نظام التقديم</div>
+        <div class="cmds-grid">
+          <div class="cmd-item"><span class="cmd-name">/apply-panel</span><div class="cmd-desc">بانل التقديم</div></div>
+          <div class="cmd-item"><span class="cmd-name">/apply-accept</span><div class="cmd-desc">قبول تقديم</div></div>
+          <div class="cmd-item"><span class="cmd-name">/apply-reject</span><div class="cmd-desc">رفض تقديم</div></div>
+        </div>
+      </div>
+      <div class="cmd-group">
+        <div class="cmd-group-title">🛡️ الحماية</div>
+        <div class="cmds-grid">
+          <div class="cmd-item"><span class="cmd-name">/anti-link</span><div class="cmd-desc">فلتر الروابط</div></div>
+          <div class="cmd-item"><span class="cmd-name">/anti-spam</span><div class="cmd-desc">فلتر السبام</div></div>
+          <div class="cmd-item"><span class="cmd-name">/anti-raid</span><div class="cmd-desc">حماية من الريد</div></div>
+          <div class="cmd-item"><span class="cmd-name">/anti-badwords</span><div class="cmd-desc">فلتر الكلمات</div></div>
+          <div class="cmd-item"><span class="cmd-name">/whitelist</span><div class="cmd-desc">قائمة بيضاء</div></div>
+          <div class="cmd-item"><span class="cmd-name">/blacklist</span><div class="cmd-desc">قائمة سوداء</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MEE6 -->
+    <div class="cmd-section" id="cmds-mee6">
+      <div class="cmd-group">
+        <div class="cmd-group-title">⭐ المستويات المتقدمة</div>
+        <div class="cmds-grid">
+          <div class="cmd-item"><span class="cmd-name">/setxp</span><div class="cmd-desc">تحديد XP لعضو</div></div>
+          <div class="cmd-item"><span class="cmd-name">/addxp</span><div class="cmd-desc">إضافة XP</div></div>
+          <div class="cmd-item"><span class="cmd-name">/removexp</span><div class="cmd-desc">سحب XP</div></div>
+          <div class="cmd-item"><span class="cmd-name">/set-xp-rate</span><div class="cmd-desc">مضاعف سرعة XP</div></div>
+          <div class="cmd-item"><span class="cmd-name">/role-reward</span><div class="cmd-desc">رتبة مكافأة بمستوى</div></div>
+        </div>
+      </div>
+      <div class="cmd-group">
+        <div class="cmd-group-title">🔔 التنبيهات</div>
+        <div class="cmds-grid">
+          <div class="cmd-item"><span class="cmd-name">/youtube-notif</span><div class="cmd-desc">تنبيه يوتيوب</div></div>
+          <div class="cmd-item"><span class="cmd-name">/twitch-notif</span><div class="cmd-desc">تنبيه تويتش</div></div>
+          <div class="cmd-item"><span class="cmd-name">/notif-list</span><div class="cmd-desc">قائمة التنبيهات</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Carl-bot -->
+    <div class="cmd-section" id="cmds-carl">
+      <div class="cmd-group">
+        <div class="cmd-group-title">🎭 الرتب التفاعلية</div>
+        <div class="cmds-grid">
+          <div class="cmd-item"><span class="cmd-name">/rr-create</span><div class="cmd-desc">رتب تفاعلية بالأزرار</div></div>
+          <div class="cmd-item"><span class="cmd-name">/rr-add-button</span><div class="cmd-desc">إضافة زر رتبة</div></div>
+          <div class="cmd-item"><span class="cmd-name">/autorole</span><div class="cmd-desc">رتب تلقائية</div></div>
+          <div class="cmd-item"><span class="cmd-name">/reactionrole</span><div class="cmd-desc">رتب بالإيموجي</div></div>
+        </div>
+      </div>
+      <div class="cmd-group">
+        <div class="cmd-group-title">⚡ الأتمتة</div>
+        <div class="cmds-grid">
+          <div class="cmd-item"><span class="cmd-name">/trigger-add</span><div class="cmd-desc">رد تلقائي على كلمة</div></div>
+          <div class="cmd-item"><span class="cmd-name">/trigger-list</span><div class="cmd-desc">قائمة التريقرز</div></div>
+          <div class="cmd-item"><span class="cmd-name">/remind-server</span><div class="cmd-desc">تذكير للسيرفر</div></div>
+          <div class="cmd-item"><span class="cmd-name">/remind-me</span><div class="cmd-desc">تذكير شخصي</div></div>
+        </div>
+      </div>
+    <!-- Dyno -->
+    <div class="cmd-section" id="cmds-dyno">
+      <div class="cmd-group">
+        <div class="cmd-group-title">🛡️ الإدارة</div>
+        <div class="cmds-grid">
+          <div class="cmd-item"><span class="cmd-name">?ban</span><div class="cmd-desc">حظر عضو من السيرفر</div></div>
+          <div class="cmd-item"><span class="cmd-name">?kick</span><div class="cmd-desc">طرد عضو</div></div>
+          <div class="cmd-item"><span class="cmd-name">?mute</span><div class="cmd-desc">كتم عضو</div></div>
+          <div class="cmd-item"><span class="cmd-name">?unmute</span><div class="cmd-desc">إزالة الكتم</div></div>
+          <div class="cmd-item"><span class="cmd-name">?warn</span><div class="cmd-desc">تحذير عضو</div></div>
+          <div class="cmd-item"><span class="cmd-name">?warnings</span><div class="cmd-desc">عرض تحذيرات عضو</div></div>
+          <div class="cmd-item"><span class="cmd-name">?purge</span><div class="cmd-desc">حذف عدد من الرسائل</div></div>
+          <div class="cmd-item"><span class="cmd-name">?lock</span><div class="cmd-desc">قفل قناة</div></div>
+          <div class="cmd-item"><span class="cmd-name">?unlock</span><div class="cmd-desc">فتح قناة</div></div>
+          <div class="cmd-item"><span class="cmd-name">?modlogs</span><div class="cmd-desc">سجل مخالفات عضو</div></div>
+          <div class="cmd-item"><span class="cmd-name">?case</span><div class="cmd-desc">عرض حالة إدارية</div></div>
+          <div class="cmd-item"><span class="cmd-name">?members</span><div class="cmd-desc">عرض أعضاء رتبة</div></div>
+        </div>
+      </div>
+      <div class="cmd-group">
+        <div class="cmd-group-title">📋 معلومات وأدوات</div>
+        <div class="cmds-grid">
+          <div class="cmd-item"><span class="cmd-name">?help</span><div class="cmd-desc">قائمة الأوامر</div></div>
+          <div class="cmd-item"><span class="cmd-name">?ping</span><div class="cmd-desc">وقت استجابة البوت</div></div>
+          <div class="cmd-item"><span class="cmd-name">?avatar</span><div class="cmd-desc">صورة عضو</div></div>
+          <div class="cmd-item"><span class="cmd-name">?announce</span><div class="cmd-desc">إرسال إعلان</div></div>
+          <div class="cmd-item"><span class="cmd-name">?addrole</span><div class="cmd-desc">إضافة رتبة لعضو</div></div>
+          <div class="cmd-item"><span class="cmd-name">?delrole</span><div class="cmd-desc">حذف رتبة من عضو</div></div>
+          <div class="cmd-item"><span class="cmd-name">?giveaway</span><div class="cmd-desc">إدارة الجوائز</div></div>
+          <div class="cmd-item"><span class="cmd-name">?prefix</span><div class="cmd-desc">تغيير بادئة الأوامر</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Arcane -->
+    <div class="cmd-section" id="cmds-arcane">
+      <div class="cmd-group">
+        <div class="cmd-group-title">📊 المستويات</div>
+        <div class="cmds-grid">
+          <div class="cmd-item"><span class="cmd-name">/level</span><div class="cmd-desc">عرض مستوى العضو</div></div>
+          <div class="cmd-item"><span class="cmd-name">/leaderboard</span><div class="cmd-desc">لائحة المتصدرين</div></div>
+          <div class="cmd-item"><span class="cmd-name">/rewards</span><div class="cmd-desc">جوائز المستويات</div></div>
+          <div class="cmd-item"><span class="cmd-name">/boosters</span><div class="cmd-desc">عرض معززات XP</div></div>
+          <div class="cmd-item"><span class="cmd-name">/card</span><div class="cmd-desc">بطاقة المستوى</div></div>
+        </div>
+      </div>
+      <div class="cmd-group">
+        <div class="cmd-group-title">🛡️ الإدارة</div>
+        <div class="cmds-grid">
+          <div class="cmd-item"><span class="cmd-name">/warn</span><div class="cmd-desc">تحذير عضو</div></div>
+          <div class="cmd-item"><span class="cmd-name">/mute</span><div class="cmd-desc">كتم عضو</div></div>
+          <div class="cmd-item"><span class="cmd-name">/unmute</span><div class="cmd-desc">رفع الكتم</div></div>
+          <div class="cmd-item"><span class="cmd-name">/kick</span><div class="cmd-desc">طرد عضو</div></div>
+          <div class="cmd-item"><span class="cmd-name">/ban</span><div class="cmd-desc">حظر عضو</div></div>
+          <div class="cmd-item"><span class="cmd-name">/unban</span><div class="cmd-desc">رفع الحظر</div></div>
+          <div class="cmd-item"><span class="cmd-name">/purge</span><div class="cmd-desc">حذف رسائل</div></div>
+          <div class="cmd-item"><span class="cmd-name">/lock</span><div class="cmd-desc">قفل قناة</div></div>
+          <div class="cmd-item"><span class="cmd-name">/unlock</span><div class="cmd-desc">فتح قناة</div></div>
+          <div class="cmd-item"><span class="cmd-name">/slowmode</span><div class="cmd-desc">تفعيل السلو مود</div></div>
+        </div>
+      </div>
+      <div class="cmd-group">
+        <div class="cmd-group-title">📌 معلومات</div>
+        <div class="cmds-grid">
+          <div class="cmd-item"><span class="cmd-name">/avatar</span><div class="cmd-desc">صورة عضو</div></div>
+          <div class="cmd-item"><span class="cmd-name">/userinfo</span><div class="cmd-desc">معلومات عضو</div></div>
+          <div class="cmd-item"><span class="cmd-name">/serverinfo</span><div class="cmd-desc">معلومات السيرفر</div></div>
+          <div class="cmd-item"><span class="cmd-name">/help</span><div class="cmd-desc">قائمة الأوامر</div></div>
+        </div>
+      </div>
+    </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DASHBOARD ═══ -->
+<div id="page-dashboard" class="page">
+  <div class="dashboard-layout">
+    <div class="dash-sidebar">
+      <h4>القوائم</h4>
+      <div class="dash-menu-item active" onclick="showDash('overview')">📊 نظرة عامة</div>
+      <div class="dash-menu-item" onclick="showDash('moderation')">🛡️ الإدارة</div>
+      <div class="dash-menu-item" onclick="showDash('welcome')">👋 الترحيب</div>
+      <div class="dash-menu-item" onclick="showDash('levels')">⭐ المستويات</div>
+      <div class="dash-menu-item" onclick="showDash('tickets')">🎫 التذاكر</div>
+      <div class="dash-menu-item" onclick="showDash('logs')">📋 السجلات</div>
+    </div>
+    <div class="dash-content">
+
+      <div id="dash-overview">
+        <div class="dash-card">
+          <h3>📊 إحصائيات السيرفر</h3>
+          <div class="dash-stats-grid">
+            <div class="dash-stat"><span class="num">0</span><div class="lbl">الأعضاء</div></div>
+            <div class="dash-stat"><span class="num">0</span><div class="lbl">الرسائل اليوم</div></div>
+            <div class="dash-stat"><span class="num">0</span><div class="lbl">التذاكر المفتوحة</div></div>
+          </div>
+        </div>
+        <div class="dash-card">
+          <h3>⚡ الأنظمة المفعلة</h3>
+          <div class="dash-row">
+            <div class="dash-row-label">نظام التذاكر<span>إدارة طلبات الدعم</span></div>
+            <div class="toggle" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="dash-row">
+            <div class="dash-row-label">نظام الترحيب<span>رسائل الأعضاء الجدد</span></div>
+            <div class="toggle" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="dash-row">
+            <div class="dash-row-label">نظام المستويات<span>XP ومكافآت</span></div>
+            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="dash-row">
+            <div class="dash-row-label">حماية السبام<span>فلترة تلقائية</span></div>
+            <div class="toggle" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="dash-row">
+            <div class="dash-row-label">فلتر الروابط<span>حذف الروابط تلقائياً</span></div>
+            <div class="toggle" onclick="this.classList.toggle('on')"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="dash-moderation" style="display:none">
+        <div class="coming-soon">
+          <div class="icon">🛡️</div>
+          <h3>إعدادات الإدارة</h3>
+          <p>قريباً — اضبط إعدادات الحماية والإدارة من هنا</p>
+        </div>
+      </div>
+      <div id="dash-welcome" style="display:none">
+        <div class="coming-soon">
+          <div class="icon">👋</div>
+          <h3>إعدادات الترحيب</h3>
+          <p>قريباً — خصص رسائل الترحيب والمغادرة</p>
+        </div>
+      </div>
+      <div id="dash-levels" style="display:none">
+        <div class="coming-soon">
+          <div class="icon">⭐</div>
+          <h3>إعدادات المستويات</h3>
+          <p>قريباً — تحكم في نظام XP والمكافآت</p>
+        </div>
+      </div>
+      <div id="dash-tickets" style="display:none">
+        <div class="coming-soon">
+          <div class="icon">🎫</div>
+          <h3>إعدادات التذاكر</h3>
+          <p>قريباً — إدارة نظام التذاكر كاملاً</p>
+        </div>
+      </div>
+      <div id="dash-logs" style="display:none">
+        <div class="coming-soon">
+          <div class="icon">📋</div>
+          <h3>السجلات</h3>
+          <p>قريباً — تتبع كل الأحداث في سيرفرك</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p>⚡ XBot — مجاني 100% · بُني بـ ❤️ للمجتمع العربي · <a href="#">GitHub</a> · <a href="#">Discord</a></p>
+  <p style="margin-top:8px">🇵🇸 من النهر إلى البحر، فلسطين ستتحرر</p>
+</footer>
+
+<script>
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  document.getElementById('nav-' + name).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function showCmds(name) {
+  document.querySelectorAll('.cmd-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.cmd-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('cmds-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function showDash(name) {
+  document.querySelectorAll('[id^="dash-"]').forEach(d => d.style.display = 'none');
+  document.querySelectorAll('.dash-menu-item').forEach(d => d.classList.remove('active'));
+  document.getElementById('dash-' + name).style.display = 'block';
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>
